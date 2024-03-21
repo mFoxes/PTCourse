@@ -1,8 +1,8 @@
-import { GetAllPostsDto } from "../dto/get-all-posts.dto";
+import { FeedPost } from "../dto/get-all-posts.dto";
 import { Post } from "../posts.model";
 
 export const formatFeedPost = (posts: Post[], userId: number) => {
-    const formattedPosts: GetAllPostsDto[] = posts.map(
+    const formattedPosts: FeedPost[] = posts.map(
         (post) =>
             ({
                 id: post.id,
@@ -14,7 +14,7 @@ export const formatFeedPost = (posts: Post[], userId: number) => {
                 dislikeNum: post.dislikeNum,
                 isUserLike: post.userIdLikes.includes(userId),
                 isUserDislike: post.userIdDislikes.includes(userId),
-            } as GetAllPostsDto)
+            } as FeedPost)
     );
     return formattedPosts;
 };

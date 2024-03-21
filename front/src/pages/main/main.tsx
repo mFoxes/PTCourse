@@ -36,15 +36,20 @@ const Main = () => {
 
 	useEffect(() => {
 		dispatch(getUser());
-		dispatch(getAllPosts());
 	}, []);
+
+	useEffect(() => {
+		if (isAuthorized) {
+			dispatch(getAllPosts());
+		}
+	}, [isAuthorized]);
 
 	if (isUserLoading === LoadingState.pending || isPostsLoading === LoadingState.pending) {
 		return <Spin />;
 	}
 
 	if (!isAuthorized) {
-		return <></>;
+		return <>Авторизуйтесь</>;
 	}
 
 	return (

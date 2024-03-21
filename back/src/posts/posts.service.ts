@@ -2,12 +2,16 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { Post } from "./posts.model";
-import { GetAllPostsDto } from "./dto/get-all-posts.dto";
+import { FeedPost } from "./dto/get-all-posts.dto";
 import { formatFeedPost } from "./helpers/formatFeedPost";
+import { PostsFilterStrategy } from "src/patterns/postsFilterStrategy/postsFilterStrategy";
 
 @Injectable()
 export class PostsService {
-    constructor(@InjectModel(Post) private postRepository: typeof Post) {}
+    constructor(
+        @InjectModel(Post) private postRepository: typeof Post,
+        private postsFilterStrategy: PostsFilterStrategy
+    ) {}
 
     async getAllPosts(userId: number) {
         const posts = await this.postRepository.findAll({
@@ -15,7 +19,11 @@ export class PostsService {
         });
 
         const formattedPosts = formatFeedPost(posts, userId);
-        return formattedPosts;
+        const filteringPosts = this.postsFilterStrategy.filterPosts(
+            formattedPosts,
+            {}
+        );
+        return filteringPosts;
     }
 
     async create(dto: CreatePostDto, userId: number) {
@@ -74,8 +82,6 @@ export class PostsService {
         }
 
         const formattedPosts = formatFeedPost([post], userId);
-        console.log("post", post);
-        console.log("formattedPosts", formattedPosts);
         return formattedPosts[0];
     }
 
